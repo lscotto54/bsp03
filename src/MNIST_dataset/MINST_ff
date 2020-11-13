@@ -1,0 +1,52 @@
+from src.fitness.base_ff_classes.base_ff import base_ff
+import tensorflow as tf
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.optimizers import SGD
+import os
+
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
+class MNIST(base_ff):
+
+    def __init__(self):
+        super().__init__()
+
+        self.num_classes = 10
+        self.epochs = 50
+
+        (self.x_train, self.y_train), (self.x_test, self.y_test) = mnist.load_data()
+        self.x_train = tf.keras.utils.normalize(self.x_train, axis=1)
+        self.x_test = tf.keras.utils.normalize(self.x_test, axis=1)
+
+        model = tf.keras.models.Sequential()
+
+        model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', input_shape=(28, 28, 1)))
+        model.add(MaxPooling2D((2, 2)))
+        model.add(Flatten())
+        model.add(Dense(10, activation='softmax'))
+
+        opt = SGD(lr=0.01, momentum=0.9)
+        model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
+        model.fit(self.x_train, self.y_train, epochs=10)
+
+
+
+    def evaluate(self, ind, **kwargs):
+
+        p, d = ind.phenotype, {"x_train": self.x_train, "y_train": self.y_train, "x_test": self.x_test, "y_test": self.y_test, "num_classes": self.num_classes, "epochs": self.epochs}
+        print(ind.phenotype)
+
+        exec(p, d)
+
+        score = d['XXX_output_XXX']
+        print("Test loss is ", score[0])
+        print("Test accuracy is ", score[1])
+
+        return score[1]
+
+
+
