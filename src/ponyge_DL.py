@@ -11,7 +11,7 @@ from src.utilities.algorithm.general import check_python_version
 
 check_python_version()
 
-from stats.stats import get_stats
+from src.stats.stats import get_stats
 from algorithm.parameters_DL import params, set_params
 import sys
 
@@ -27,5 +27,5 @@ def mane():
 
 
 if __name__ == "__main__":
-    set_params(sys.argv[1:])  # exclude the ponyge.py arg itself
+    set_params(sys.argv[1:])
     mane()
